@@ -20,3 +20,14 @@ def post_new(request):
     else:
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
+
+def post_edit(request, pk):
+    post = get_object_or_404(Post, pk=pk)  # 수정할 게시글 가져오기
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)  # 기존 객체와 함께 폼 생성
+        if form.is_valid():
+            form.save()  # 수정사항 저장
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)  # GET 요청 시 기존 내용 채워진 폼 보여주기
+    return render(request, 'blog/post_form.html', {'form': form})
